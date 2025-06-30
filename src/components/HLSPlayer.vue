@@ -42,50 +42,38 @@ const toggleFullscreen = async () => {
     if (!document.fullscreenElement) {
       await containerRef.value.requestFullscreen();
       isFullscreen.value = true;
-      
-      // 如果是移动设备，尝试多种方式提示或强制横屏
+
+      // 如果是移动设备，进入全屏后强制横屏
       if (isMobile()) {
-        // 方法1: 尝试使用Screen Orientation API
         try {
+          // 使用类型断言来处理Screen Orientation API
           const orientation = (screen as any).orientation;
           if (orientation && orientation.lock) {
-            await orientation.lock('landscape');
+            await orientation.lock("landscape");
           }
         } catch (orientationError) {
-          // 方法2: 如果Screen Orientation API不支持，显示横屏提示
-          console.log('Screen Orientation API不支持，将使用CSS优化横屏体验');
-          
-          // 添加CSS类来优化横屏显示
-          document.body.classList.add('fullscreen-landscape-hint');
-          
-          // 尝试触发设备方向改变事件（某些设备可能响应）
-          if (window.DeviceOrientationEvent) {
-            window.dispatchEvent(new Event('orientationchange'));
-          }
+          console.log("横屏锁定失败:", orientationError);
         }
       }
     } else {
       await document.exitFullscreen();
       isFullscreen.value = false;
-      
-      // 退出全屏时清理
+
+      // 退出全屏时解除屏幕方向锁定
       if (isMobile()) {
         try {
+          // 使用类型断言来处理Screen Orientation API
           const orientation = (screen as any).orientation;
           if (orientation && orientation.unlock) {
             orientation.unlock();
           }
         } catch (orientationError) {
-          // 清理CSS类
-          document.body.classList.remove('fullscreen-landscape-hint');
+          console.log("解除屏幕锁定失败:", orientationError);
         }
-        
-        // 清理CSS类
-        document.body.classList.remove('fullscreen-landscape-hint');
       }
     }
   } catch (error) {
-    console.error('全屏操作失败:', error);
+    console.error("全屏操作失败:", error);
   }
 };
 
