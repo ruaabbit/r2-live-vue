@@ -10,7 +10,7 @@ const containerRef = ref<HTMLDivElement>();
 const isFullscreen = ref(false);
 
 const streamUrl =
-  "https://ruabbit-bucket.r2.52lxy.one/owncast/hls/0/stream.m3u8";
+  "https://ruabbit-bucket.r2.ruabbit.vip/owncast/hls/0/stream.m3u8";
 
 const {
   isLoading,
